@@ -9,8 +9,8 @@ function CurrentWeather(props) {
 	return (
 		<div className="container grid grid-cols-2">
 			<div className="container__background weather">
-				<Icon name="location" color="white" size="35" />
 				<p className="weather__location">
+					<Icon name="location" color="white" size="35" />
 					{`${location.name},`}
 					<br />
 					{`${location.region},`}

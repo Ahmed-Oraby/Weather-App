@@ -64,7 +64,7 @@ body {
 .icon {
 	/* width: 40px;
 	height: 40px; */
-	margin-right: 1.5rem;
+	margin-right: 1rem;
 	/* fill: white; */
 }
 
@@ -75,8 +75,8 @@ body {
 }
 
 .container__background {
-	padding: 4rem 3rem;
-	margin-top: 5rem;
+	padding: 4rem;
+	margin-top: 4rem;
 	background-color: black;
 	color: white;
 	opacity: 0.7;
@@ -85,7 +85,7 @@ body {
 }
 
 .weather {
-	text-align: center;
+	/* text-align: center; */
 	/* max-width: 450px;
 	min-width: 300px; */
 }
@@ -162,4 +162,39 @@ body {
 }
 .btn--primary:hover {
 	background-color: rgb(180, 180, 180);
+}
+
+.search-group {
+	border: 1px solid #ccc;
+	border-radius: 50px;
+	display: flex;
+	background-color: white;
+	max-width: 450px;
+	margin: 5rem auto 0;
+}
+
+.search {
+	padding: 1rem 3.5rem;
+	border: 1px solid #ccc;
+	/* border-radius: 50px; */
+	outline: none;
+	/* color: var(--color-heading); */
+	font-size: 2rem;
+	border-top-left-radius: 50px;
+	border-bottom-left-radius: 50px;
+	background-color: white;
+}
+
+.search-group .search {
+	border: none;
+	padding: 1rem 2.5rem;
+	flex-grow: 1;
+	width: 100%;
+}
+
+.search-group .btn {
+	margin: 3px;
+	border-radius: 40px;
+	background-color: gray;
+	color: white;
 }
