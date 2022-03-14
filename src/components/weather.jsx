@@ -7,15 +7,27 @@ class Weather extends Component {
 		weatherLoaded: false,
 		current: null,
 		location: null,
+		type: "C",
+	};
+
+	handleTemperatureChange = (type) => {
+		if (type === this.state.type) return;
+		this.setState({ type });
 	};
 
 	componentDidMount() {
 		this.getWeatherData("current");
+		console.log("mounted");
 	}
 
 	render() {
 		return this.state.weatherLoaded ? (
-			<CurrentWeather current={this.state.current} location={this.state.location} />
+			<CurrentWeather
+				current={this.state.current}
+				location={this.state.location}
+				type={this.state.type}
+				onTemperatureChange={this.handleTemperatureChange}
+			/>
 		) : (
 			<div className="spinner-container">
 				<img className="spinner" src={spinner} alt="" />
