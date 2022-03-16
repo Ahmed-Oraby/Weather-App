@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import CurrentWeather from "./currentWeather";
 import Search from "./search";
 import Loading from "./loading";
-
-// const APIURL = "https://api.weatherapi.com/v1/";
-// const APIKey = "969cb668e64d4173bc0145329222001";
+import Locate from "./locate";
 
 class Weather extends Component {
 	state = {
@@ -12,6 +10,7 @@ class Weather extends Component {
 		current: null,
 		location: null,
 		type: "C",
+		notFound: false,
 	};
 
 	API = {
@@ -19,36 +18,77 @@ class Weather extends Component {
 		key: "969cb668e64d4173bc0145329222001",
 	};
 
+	locatedWeather = {
+		located: false,
+		current: null,
+		location: null,
+		forecast: null,
+	};
+
+	searchedWeather = {
+		searched: false,
+		name: undefined,
+		current: null,
+		location: null,
+		forecast: null,
+	};
+
 	handleTemperatureChange = (type) => {
 		if (type === this.state.type) return;
 		this.setState({ type });
 	};
 
-	handleSubmit = (value, e) => {
+	handleSearch = (locationName, e) => {
 		e.preventDefault();
-		if (value) {
-			this.getWeatherData("current", null, value.toLowerCase());
+		if (locationName) {
+			if (this.searchedWeather.name !== locationName) {
+				this.searchedWeather.name = locationName;
+				this.searchedWeather.searched = true;
+				this.getWeatherData("current", null, locationName.toLowerCase());
+			} else {
+				this.setWeatherData(this.searchedWeather);
+			}
 		}
 	};
 
-	componentDidMount() {
-		this.getCurrentWeather("forecast");
-		console.log("mounted");
-	}
+	handleRefresh = () => {
+		if (this.state.weatherLoaded) {
+			this.setWeatherData(this.locatedWeather);
+		} else {
+			this.getCurrentWeather("forecast");
+		}
+	};
+
+	handleLocate = () => {
+		if (this.locatedWeather.current) {
+			this.setWeatherData(this.locatedWeather);
+		} else {
+			this.getCurrentWeather("forecast");
+		}
+	};
+
+	// componentDidMount() {
+	// 	// this.getCurrentWeather("forecast");
+	// 	console.log("mounted");
+	// }
 
 	render() {
-		return this.state.weatherLoaded ? (
+		return (
 			<React.Fragment>
-				<Search onSubmit={this.handleSubmit} />
-				<CurrentWeather
-					current={this.state.current}
-					location={this.state.location}
-					type={this.state.type}
-					onTemperatureChange={this.handleTemperatureChange}
-				/>
+				<Search onSubmit={this.handleSearch} notFound={this.state.notFound} />
+				<Locate onClick={this.handleLocate} />
+				{this.state.weatherLoaded ? (
+					<CurrentWeather
+						current={this.state.current}
+						location={this.state.location}
+						type={this.state.type}
+						onTemperatureChange={this.handleTemperatureChange}
+						onRefresh={this.handleRefresh}
+					/>
+				) : (
+					<Loading />
+				)}
 			</React.Fragment>
-		) : (
-			<Loading />
 		);
 	}
 
@@ -56,6 +96,7 @@ class Weather extends Component {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				console.log(position);
+				this.locatedWeather.located = true;
 				this.getWeatherData(type, position);
 			});
 		} else {
@@ -81,11 +122,13 @@ class Weather extends Component {
 		// 		console.log(position);
 
 		xhr.onload = () => {
+			console.log(xhr);
 			if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-				console.log(xhr);
 				data = JSON.parse(xhr.responseText);
 				console.log("weather:", data);
 				this.setWeatherData(data);
+			} else if (xhr.status === 400) {
+				this.setState({ notFound: true });
 			}
 		};
 		xhr.open("GET", requestURL, true);
@@ -97,10 +140,18 @@ class Weather extends Component {
 	}
 
 	setWeatherData(weatherData) {
+		if (this.locatedWeather.located) {
+			this.locatedWeather = { located: false, ...weatherData };
+		} else if (this.searchedWeather.searched) {
+			let name = this.searchedWeather.name;
+			this.searchedWeather = { searched: false, name, ...weatherData };
+			console.log(this.searchedWeather);
+		}
 		this.setState({
 			weatherLoaded: true,
 			current: weatherData.current,
 			location: weatherData.location,
+			notFound: false,
 		});
 	}
 }

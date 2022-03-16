@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Icon from "./icon";
+import NotFound from "./notFound";
 
 class Search extends Component {
 	state = {
@@ -26,11 +27,14 @@ class Search extends Component {
 						id="search"
 						value={this.state.value}
 					/>
-					<button className="btn" type="submit">
-						<Icon name="search" color="white" size={35} />
+					<button className="btn btn--secondary" type="submit">
+						<Icon name="search" color="white" size={20} />
 						Search
 					</button>
 				</form>
+				{this.props.notFound && (
+					<NotFound message="🙁 Not Found. Please enter a valid name!" />
+				)}
 			</div>
 		);
 	}

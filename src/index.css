@@ -48,17 +48,19 @@ body {
 	}
 }
 
-.spinner-container {
+/* .spinner-container {
 	width: 100vw;
 	height: 100vh;
 	background-color: white;
-}
+} */
 
 .spinner {
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	width: 100px;
+	height: 100px;
 }
 
 .icon {
@@ -69,14 +71,14 @@ body {
 }
 
 .container {
-	margin: 2rem auto;
+	margin: 1.5rem auto;
 	max-width: 800px;
-	/* padding: 2rem; */
+	text-align: center;
 }
 
 .container__background {
 	padding: 4rem;
-	margin-top: 4rem;
+	margin-top: 3rem;
 	background-color: black;
 	color: white;
 	opacity: 0.7;
@@ -85,6 +87,7 @@ body {
 }
 
 .weather {
+	max-width: 400px;
 	/* text-align: center; */
 	/* max-width: 450px;
 	min-width: 300px; */
@@ -99,7 +102,7 @@ body {
 .weather__location {
 	font-size: 3rem;
 	/* font-weight: bold; */
-	text-align: center;
+	/* text-align: center; */
 }
 
 .weather__temp {
@@ -108,12 +111,12 @@ body {
 
 .weather__condition {
 	font-size: 3rem;
-	text-align: center;
+	/* text-align: center; */
 }
 
 .weather__updated {
 	/* font-size: 1.5rem; */
-	text-align: center;
+	/* text-align: center; */
 	padding-top: 1rem;
 	/* font-weight: bold; */
 }
@@ -140,6 +143,7 @@ body {
 	font-size: 2rem;
 	display: flex;
 	align-items: center;
+	max-width: 500px;
 }
 
 .btn {
@@ -164,12 +168,30 @@ body {
 	background-color: rgb(180, 180, 180);
 }
 
+.btn--secondary {
+	background-color: gray;
+	color: white;
+}
+
+.btn--secondary:hover {
+	background-color: rgb(100, 100, 100);
+}
+
+.btn--light-black {
+	background-color: rgb(56, 56, 56);
+	color: white;
+}
+
+.btn--light-black:hover {
+	background-color: rgb(85, 85, 85);
+}
+
 .search-group {
 	border: 1px solid #ccc;
 	border-radius: 50px;
 	display: flex;
 	background-color: white;
-	max-width: 450px;
+	max-width: 400px;
 	margin: 5rem auto 0;
 }
 
@@ -195,6 +217,28 @@ body {
 .search-group .btn {
 	margin: 3px;
 	border-radius: 40px;
-	background-color: gray;
-	color: white;
 }
+
+.refresh {
+	cursor: pointer;
+}
+
+.refresh .icon {
+	margin: 0;
+}
+
+.not-found {
+	/* text-align: center; */
+	background-color: rgb(170, 0, 0);
+	color: white;
+	border: 2px solid black;
+	border-radius: 10px;
+	font-size: 2.5rem;
+	padding: 2rem;
+	max-width: 400px;
+	margin: 3rem auto;
+}
+/* 
+.locate {
+	text-align: center;
+} */

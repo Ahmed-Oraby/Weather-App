@@ -1,22 +1,24 @@
-import React, { Component } from "react";
+import React from "react";
 import WeatherCelsius from "./weatherCelsius";
 import WeatherFahrenheit from "./weatherFahrenheit";
 import Icon from "./icon";
 
 function CurrentWeather(props) {
-	console.log(props);
-	const { location, current, type, onTemperatureChange } = props;
+	const { location, current, type, onTemperatureChange, onRefresh } = props;
 	return (
 		<div className="container grid grid-cols-2">
 			<div className="container__background weather">
-				<p className="weather__location">
-					<Icon name="location" color="white" size="35" />
-					{`${location.name},`}
-					<br />
-					{`${location.region},`}
-					<br />
-					{`${location.country}`}
-				</p>
+				<div className="weather__location">
+					<span className="refresh" onClick={onRefresh}>
+						<Icon name="refresh" color="white" size={35} />
+					</span>
+					<p>
+						<Icon name="location" color="white" size="35" />
+						{`${location.name}, ${location.region},`}
+						<br />
+						{`${location.country}`}
+					</p>
+				</div>
 				<div className="flex flex-centered">
 					<img className="weather__icon" src={current.condition.icon} alt="" />
 					<p className="weather__temp">
