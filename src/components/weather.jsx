@@ -9,6 +9,7 @@ class Weather extends Component {
 		weatherLoaded: false,
 		current: null,
 		location: null,
+		forecast: null,
 		type: "C",
 		notFound: false,
 	};
@@ -44,6 +45,7 @@ class Weather extends Component {
 			if (this.searchedWeather.name !== locationName) {
 				this.searchedWeather.name = locationName;
 				this.searchedWeather.searched = true;
+				this.setState({ weatherLoaded: false });
 				this.getWeatherData("current", null, locationName.toLowerCase());
 			} else {
 				this.setWeatherData(this.searchedWeather);
@@ -51,19 +53,13 @@ class Weather extends Component {
 		}
 	};
 
-	handleRefresh = () => {
-		if (this.state.weatherLoaded) {
-			this.setWeatherData(this.locatedWeather);
-		} else {
-			this.getCurrentWeather("forecast");
-		}
-	};
-
 	handleLocate = () => {
-		if (this.locatedWeather.current) {
-			this.setWeatherData(this.locatedWeather);
-		} else {
+		if (!this.locatedWeather.current) {
+			this.locatedWeather.located = true;
+			this.setState({ weatherLoaded: false });
 			this.getCurrentWeather("forecast");
+		} else {
+			this.setWeatherData(this.locatedWeather);
 		}
 	};
 
@@ -83,10 +79,11 @@ class Weather extends Component {
 						location={this.state.location}
 						type={this.state.type}
 						onTemperatureChange={this.handleTemperatureChange}
-						onRefresh={this.handleRefresh}
 					/>
 				) : (
-					<Loading />
+					//render a loading spinner when an api request is sent by either locating or searching,
+					//but the spinner doesn't load at app start
+					(this.locatedWeather.located || this.searchedWeather.searched) && <Loading />
 				)}
 			</React.Fragment>
 		);
@@ -96,7 +93,6 @@ class Weather extends Component {
 		if ("geolocation" in navigator) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				console.log(position);
-				this.locatedWeather.located = true;
 				this.getWeatherData(type, position);
 			});
 		} else {
@@ -141,9 +137,11 @@ class Weather extends Component {
 
 	setWeatherData(weatherData) {
 		if (this.locatedWeather.located) {
+			//set located flag to false to reduce server requests for the same location
 			this.locatedWeather = { located: false, ...weatherData };
 		} else if (this.searchedWeather.searched) {
 			let name = this.searchedWeather.name;
+			//set searched flag to false to reduce server requests for the last searched location
 			this.searchedWeather = { searched: false, name, ...weatherData };
 			console.log(this.searchedWeather);
 		}

@@ -4,14 +4,11 @@ import WeatherFahrenheit from "./weatherFahrenheit";
 import Icon from "./icon";
 
 function CurrentWeather(props) {
-	const { location, current, type, onTemperatureChange, onRefresh } = props;
+	const { location, current, type, onTemperatureChange } = props;
 	return (
 		<div className="container grid grid-cols-2">
 			<div className="container__background weather">
 				<div className="weather__location">
-					<span className="refresh" onClick={onRefresh}>
-						<Icon name="refresh" color="white" size={35} />
-					</span>
 					<p>
 						<Icon name="location" color="white" size="35" />
 						{`${location.name}, ${location.region},`}
@@ -26,7 +23,9 @@ function CurrentWeather(props) {
 					</p>
 				</div>
 				<p className="weather__condition">{current.condition.text}</p>
-				<p className="weather__updated">Updated as of {current.last_updated}</p>
+				<p className="weather__updated">
+					Updated as of: <br /> {current.last_updated}
+				</p>
 				<div style={{ textAlign: "center" }}>
 					<button className="btn btn--primary" onClick={() => onTemperatureChange("C")}>
 						Celsius
