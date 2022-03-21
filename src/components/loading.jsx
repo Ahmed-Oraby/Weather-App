@@ -3,7 +3,7 @@ import spinner from "../images/spinner.gif";
 
 function Loading() {
 	return (
-		<div className="spinner-container">
+		<div className="container">
 			<img className="spinner" src={spinner} alt="" />
 		</div>
 	);

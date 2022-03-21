@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Icon from "./icon";
-import NotFound from "./notFound";
 
 class Search extends Component {
 	state = {
@@ -36,9 +35,6 @@ class Search extends Component {
 						</button>
 					</div>
 				</form>
-				{this.props.notFound && (
-					<NotFound message="🙁 Not Found. Please enter a valid name!" />
-				)}
 			</div>
 		);
 	}

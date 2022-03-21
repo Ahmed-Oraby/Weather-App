@@ -3,6 +3,8 @@ import CurrentWeather from "./currentWeather";
 import Search from "./search";
 import Loading from "./loading";
 import Locate from "./locate";
+import ForecastWeather from "./forecastWeather";
+import NotFound from "./notFound";
 
 class Weather extends Component {
 	state = {
@@ -11,7 +13,7 @@ class Weather extends Component {
 		location: null,
 		forecast: null,
 		type: "C",
-		notFound: false,
+		errorMessage: "",
 	};
 
 	API = {
@@ -27,8 +29,8 @@ class Weather extends Component {
 	};
 
 	searchedWeather = {
+		name: "",
 		searched: false,
-		name: undefined,
 		current: null,
 		location: null,
 		forecast: null,
@@ -45,56 +47,79 @@ class Weather extends Component {
 			if (this.searchedWeather.name !== locationName) {
 				this.searchedWeather.name = locationName;
 				this.searchedWeather.searched = true;
-				this.setState({ weatherLoaded: false });
-				this.getWeatherData("current", null, locationName.toLowerCase());
+				this.setState({ weatherLoaded: false, errorMessage: "" });
+				this.getWeatherData("forecast", null, locationName.toLowerCase());
 			} else {
-				this.setWeatherData(this.searchedWeather);
+				let weatherData = {
+					current: this.searchedWeather.current,
+					location: this.searchedWeather.location,
+					forecast: this.searchedWeather.forecast,
+				};
+				this.setWeatherData(weatherData);
 			}
 		}
 	};
 
 	handleLocate = () => {
 		if (!this.locatedWeather.current) {
-			this.locatedWeather.located = true;
-			this.setState({ weatherLoaded: false });
 			this.getCurrentWeather("forecast");
 		} else {
-			this.setWeatherData(this.locatedWeather);
+			let weatherData = {
+				current: this.locatedWeather.current,
+				location: this.locatedWeather.location,
+				forecast: this.locatedWeather.forecast,
+			};
+			this.setWeatherData(weatherData);
 		}
 	};
 
-	// componentDidMount() {
-	// 	// this.getCurrentWeather("forecast");
-	// 	console.log("mounted");
-	// }
-
 	render() {
+		console.log("state", this.state);
+		console.log("located", this.locatedWeather);
+		console.log("searched", this.searchedWeather);
 		return (
 			<React.Fragment>
-				<Search onSubmit={this.handleSearch} notFound={this.state.notFound} />
+				<Search onSubmit={this.handleSearch} />
 				<Locate onClick={this.handleLocate} />
 				{this.state.weatherLoaded ? (
-					<CurrentWeather
-						current={this.state.current}
-						location={this.state.location}
-						type={this.state.type}
-						onTemperatureChange={this.handleTemperatureChange}
-					/>
+					<>
+						<CurrentWeather
+							current={this.state.current}
+							location={this.state.location}
+							type={this.state.type}
+							onTemperatureChange={this.handleTemperatureChange}
+						/>
+						<ForecastWeather forecast={this.state.forecast} type={this.state.type} />
+					</>
 				) : (
 					//render a loading spinner when an api request is sent by either locating or searching,
 					//but the spinner doesn't load at app start
 					(this.locatedWeather.located || this.searchedWeather.searched) && <Loading />
 				)}
+				{this.state.errorMessage && <NotFound message={this.state.errorMessage} />}
 			</React.Fragment>
 		);
 	}
 
 	getCurrentWeather(type) {
 		if ("geolocation" in navigator) {
-			navigator.geolocation.getCurrentPosition((position) => {
-				console.log(position);
-				this.getWeatherData(type, position);
-			});
+			console.log("navigator");
+			navigator.geolocation.getCurrentPosition(
+				(position) => {
+					console.log(position);
+					this.locatedWeather.located = true;
+					this.setState({ weatherLoaded: false });
+					this.getWeatherData(type, position);
+				},
+				(error) => {
+					console.log(error);
+					this.locatedWeather.located = false;
+					this.setState({
+						weatherLoaded: false,
+						errorMessage: "🙁 Error. Location cannot be detected!",
+					});
+				}
+			);
 		} else {
 			console.log("your browser doesnot support geoloction");
 		}
@@ -113,26 +138,20 @@ class Weather extends Component {
 				position.coords.latitude
 			},${position.coords.longitude}&days=3&aqi=no&alerts=no`;
 		}
-		// if ("geolocation" in navigator) {
-		// 	navigator.geolocation.getCurrentPosition((position) => {
-		// 		console.log(position);
 
 		xhr.onload = () => {
-			console.log(xhr);
 			if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
 				data = JSON.parse(xhr.responseText);
 				console.log("weather:", data);
 				this.setWeatherData(data);
 			} else if (xhr.status === 400) {
-				this.setState({ notFound: true });
+				this.searchedWeather.name = "";
+				this.searchedWeather.searched = false;
+				this.setState({ errorMessage: "🙁 Not Found. Please enter a valid name!" });
 			}
 		};
 		xhr.open("GET", requestURL, true);
 		xhr.send();
-		// });
-		// } else {
-		// 	console.log("your browser doesnot support geoloction");
-		// }
 	}
 
 	setWeatherData(weatherData) {
@@ -147,9 +166,8 @@ class Weather extends Component {
 		}
 		this.setState({
 			weatherLoaded: true,
-			current: weatherData.current,
-			location: weatherData.location,
-			notFound: false,
+			errorMessage: "",
+			...weatherData,
 		});
 	}
 }

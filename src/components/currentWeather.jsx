@@ -3,14 +3,14 @@ import WeatherCelsius from "./weatherCelsius";
 import WeatherFahrenheit from "./weatherFahrenheit";
 import Icon from "./icon";
 
-function CurrentWeather(props) {
-	const { location, current, type, onTemperatureChange } = props;
+function CurrentWeather({ location, current, type, onTemperatureChange }) {
 	return (
-		<div className="container grid grid-cols-2">
-			<div className="container__background weather">
+		<div className="container weather grid grid-cols-2">
+			<div className="container__background ">
+				<h2>Today</h2>
 				<div className="weather__location">
 					<p>
-						<Icon name="location" color="white" size="35" />
+						<Icon name="location" color="white" size="25" />
 						{`${location.name}, ${location.region},`}
 						<br />
 						{`${location.country}`}
