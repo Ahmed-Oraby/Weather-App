@@ -74,9 +74,6 @@ class Weather extends Component {
 	};
 
 	render() {
-		console.log("state", this.state);
-		console.log("located", this.locatedWeather);
-		console.log("searched", this.searchedWeather);
 		return (
 			<React.Fragment>
 				<Search onSubmit={this.handleSearch} />
@@ -103,12 +100,11 @@ class Weather extends Component {
 
 	getCurrentWeather(type) {
 		if ("geolocation" in navigator) {
-			console.log("navigator");
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
 					console.log(position);
 					this.locatedWeather.located = true;
-					this.setState({ weatherLoaded: false });
+					this.setState({ weatherLoaded: false, errorMessage: "" });
 					this.getWeatherData(type, position);
 				},
 				(error) => {
@@ -147,7 +143,10 @@ class Weather extends Component {
 			} else if (xhr.status === 400) {
 				this.searchedWeather.name = "";
 				this.searchedWeather.searched = false;
-				this.setState({ errorMessage: "🙁 Not Found. Please enter a valid name!" });
+				this.setState({
+					weatherLoaded: false,
+					errorMessage: "🙁 Not Found. Please enter a valid name!",
+				});
 			}
 		};
 		xhr.open("GET", requestURL, true);
@@ -162,7 +161,6 @@ class Weather extends Component {
 			let name = this.searchedWeather.name;
 			//set searched flag to false to reduce server requests for the last searched location
 			this.searchedWeather = { searched: false, name, ...weatherData };
-			console.log(this.searchedWeather);
 		}
 		this.setState({
 			weatherLoaded: true,

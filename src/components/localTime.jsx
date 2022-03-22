@@ -11,7 +11,6 @@ class LocalTime extends Component {
 		intervalID = setInterval(() => {
 			this.setState({ date: new Date() });
 		}, 100);
-		console.log(intervalID);
 	}
 
 	componentWillUnmount() {

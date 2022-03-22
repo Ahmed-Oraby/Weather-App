@@ -6,7 +6,9 @@ class NavBar extends Component {
 	render() {
 		return (
 			<nav className="nav-bar">
-				<h1 className="nav__title">Weather App</h1>
+				<h1 className="nav__title">
+					<a href="/">Weather App</a>
+				</h1>
 				<LocalTime />
 			</nav>
 		);
